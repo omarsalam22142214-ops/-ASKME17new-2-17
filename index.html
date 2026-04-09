@@ -458,18 +458,21 @@
             });
 
             try {
-                const sheetApiUrl = './questions_db.json'; 
-                const response = await fetch(sheetApiUrl);
-                const sheetData = await response.json();
+    const sheetApiUrl = './questions_db.json'; 
+    const response = await fetch(sheetApiUrl);
+    const sheetData = await response.json();
 
-                if (sheetData && sheetData.length > 0) {
-                    arabicQuestions = arabicQuestions.concat(sheetData);
-                    showToast(`تم سحب ${sheetData.length} سؤال من جوجل شيت! 🤩`);
-                }
-            } catch (e) { 
-                console.error("مشكلة في سحب أسئلة الشيت:", e); 
-                showToast("النت ضعيف، هنلعب بالأسئلة الأساسية 📶");
-            }
+    if (sheetData && sheetData.length > 0) {
+        // السطرين دول هما التعديل: بنفلتر الأسئلة حسب الأقسام اللي اللاعب اختارها
+        const filteredQuestions = sheetData.filter(item => selectedCategories.includes(item.category));
+        arabicQuestions = arabicQuestions.concat(filteredQuestions);
+        
+        showToast(`تم سحب ${filteredQuestions.length} سؤال من بنك الأسئلة الداخلي! 🤩`);
+    }
+} catch (e) { 
+    console.error("مشكلة في سحب أسئلة الملف الداخلي:", e); 
+    showToast("النت ضعيف، هنلعب بالأسئلة الأساسية 📶"); 
+}
 
             for (const cat of selectedCategories) {
                 const apiId = unifiedCategories[cat].apiId;
